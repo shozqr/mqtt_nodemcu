@@ -1,0 +1,22 @@
+{
+  "name": "mqtt-broker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "aedes": "^0.44.0",
+    "aedes-server-factory": "^0.1.1",
+    "mosca": "^2.8.3",
+    "sqlite": "^4.0.18",
+    "sqlite3": "^5.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  },
+  "scripts": {
+    "start": "nodemon broker.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
