@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>MQTT Client</title>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+    integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+  <script>
+    const client = mqtt.connect('ws://localhost:8888', { clientId: 'wsClient' + (new Date()).getTime() });
+    const ds18b20Topic = 'nodemcu/ds18b20';
+    const ledTopic = 'nodemcu/led';
+
+    client.subscribe(ds18b20Topic);
+
+    client.on('connect', function () {
+      console.log('connected!');
+    });
+
+    client.on('message', function (topic, message) {
+      console.log(`${topic} : ${message.toString()}`);
+      switch (topic) {
+        case ds18b20Topic:
+          try {
+            const jsonMessage = JSON.parse(message.toString());
+            document.getElementById('temperature').innerHTML = jsonMessage.temperature;
+          } catch (err) {
+            console.error(`error: ${err}`);
+          }
+          break;
+
+        default:
+          break;
+      }
+    });
+
+    function led(value) {
+      client.publish(ledTopic, value);
+    }
+  </script>
+</head>
+
+<body>
+  <div class="text-center" style="padding: 10em">
+    <button type="button" class="btn btn-danger" onclick="led('on')">Led On</button>
+    <button type="button" class="btn btn-secondary" onclick="led('off')">Led Off</button>
+    <div style="padding: 10px">Sıcaklık: <strong id="temperature">0</strong></div>
+  </div>
+
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
